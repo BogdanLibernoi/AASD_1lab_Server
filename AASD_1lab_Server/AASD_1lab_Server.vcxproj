@@ -129,10 +129,12 @@
   <ItemGroup>
     <ClCompile Include="AASD_1lab_Server.cpp" />
     <ClCompile Include="Patient.cpp" />
+    <ClCompile Include="PatientsHandler.cpp" />
     <ClCompile Include="Queue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Patient.h" />
+    <ClInclude Include="PatientsHandler.h" />
     <ClInclude Include="Queue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

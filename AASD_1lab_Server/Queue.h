@@ -14,8 +14,42 @@ private:
 
 
 public:
-	template<template<class> class T>
-	friend class QueueIterator;
+	struct Iterator
+	{
+		int index;
+		Queue<T>* que;
+
+		Iterator(int index, Queue<T>* queue)
+			: index(index), que(queue)
+		{}
+
+		bool operator==(const Iterator& other) const { return index == other.index; }
+		bool operator!=(const Iterator& other) const { return index != other.index; }
+
+		Iterator& operator++()
+		{
+			index = (index + 1) % que->size;
+			return *this;
+		}
+		Iterator& operator++(int a)
+		{
+			index = (index + 1) % que->size;
+			return *this;
+		}
+		Iterator& operator--()
+		{
+			index = (index - 1 + que->size) % que->size;
+			return *this;
+		}
+		Iterator& operator--(int a)
+		{
+			index = (index - 1 + que->size) % que->size;
+			return *this;
+		}
+
+		T& operator*() { return que->queue[index]; }
+		T* operator->() { return &(que->queue[index]); }
+	};
 
 
 	Queue()
@@ -102,20 +136,38 @@ public:
 		}
 	}
 
+	int GetSize()
+	{
+		return size;
+	}
 
 	// Перепелить во что-то годное
 	T& operator[] (const int& n)
 	{
-		if (n > 0 && n < size)
+		if ((n+front)%size < front && (n + front)%size > rear)
 		{
-			return queue[n];
+			return queue[(n+begin)%size];
 		}
-		return queue[0];
+		return queue[begin];
 	}
 
 	T& operator++() { *queue++;  }
 
+	
+
+	Iterator begin() { return Iterator(front, this); }
+	Iterator end() { return Iterator(rear, this); }
+
+
+	~Queue()
+	{
+		delete[] queue;
+	}
+
 };
+
+
+
 
 
 
