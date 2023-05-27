@@ -10,25 +10,37 @@
 
 SOCKET ConnectSocket;
 
-void StartWorking(PatientsHandler action)
+void StartWorking(PatientsHandler action, SOCKET sock)
 {
     char msg[512] = " ";
 
     while(true) {
-        int check = recv(ConnectSocket, msg, sizeof(msg), NULL);
+        int check = recv(sock, msg, sizeof(msg), NULL);
         Sleep(1000);
         std::cout << msg;
         //std::cout << check;
         if (check != -1)
         {
-            strcpy_s(msg, action.GetPatient().c_str());
-            send(ConnectSocket, msg, sizeof(msg), NULL);
+            std::string temp = action.GetPatient();
+            //while (temp != "queue is empty")
+            //{
+                strcpy_s(msg, temp.c_str());
+                send(sock, msg, sizeof(msg), NULL);
+           // }
+        }
+
+        else if (check == -1)
+        {
+            std::cout << "Can't accept message. Error #" << WSAGetLastError();
+            break;
         }
     }
 }
 
 int main()
 {
+    PatientsHandler handler;
+
 #pragma region Socket Connection
 
     WSADATA wsaData;
@@ -66,7 +78,7 @@ int main()
     // Инициализация  IP-адреса, порта, семейства адресов
     servInfo.sin_family = AF_INET;
     servInfo.sin_addr = ip_to_num;
-    servInfo.sin_port = htons('1110');
+    servInfo.sin_port = htons('1119');
 
     // Привязка IP, port(a) и семейства адресов к сокету
     result = bind(ConnectSocket, (sockaddr*)&servInfo, sizeof(servInfo));
@@ -92,13 +104,32 @@ int main()
     }
     else
         std::cout << "Listening... " << std::endl << std::endl;
+
+    sockaddr_in clientInfo;
+    int size_clientInfo = sizeof(clientInfo);
+
+    ZeroMemory(&clientInfo, size_clientInfo);
+
+    SOCKET clientConnection;
+
+
+    clientConnection = accept(ConnectSocket, (sockaddr*)&clientInfo, &size_clientInfo);
+
+    if (clientConnection == INVALID_SOCKET)
+    {
+        std::cout << "Client detected, but can't connect to a client. Error: " << WSAGetLastError() << std::endl;
+        closesocket(clientConnection);
+        closesocket(ConnectSocket);
+        WSACleanup();
+        return 1;
+    }
+    else
+    {
+        std::cout << "Connection to a client successful" << std::endl;
+        StartWorking(handler, clientConnection);
+    }
+
 #pragma endregion
-
-    PatientsHandler handler;
-
-    //CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)StartWorking, (LPVOID)(&handler), NULL, NULL);
-    
-    StartWorking(handler);
 
     system("pause");
 }

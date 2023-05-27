@@ -51,6 +51,10 @@ public:
 		T* operator->() { return &(que->queue[index]); }
 	};
 
+	Iterator begin() { return Iterator(front, this); }
+	Iterator end() { return Iterator(rear, this); }
+
+
 
 	Queue()
 		:front(-1), rear(-1), size(10)
@@ -118,45 +122,6 @@ public:
 		}
 
 	}
-
-	void Display()const // doesn't work
-	{
-		if (IsEmpty())
-			std::cout << "Queue is empty" << std::endl;
-		else
-		{
-			std::cout << "Front index: " << front << std::endl;
-
-			std::cout << "Elements: ";
-			for (int i = front; i <= rear; i++)
-			{
-				std::cout<< queue[i] << "\n";
-			}
-			std::cout << std::endl << "Rear index: " << rear << std::endl;
-		}
-	}
-
-	int GetSize()
-	{
-		return size;
-	}
-
-	// Перепелить во что-то годное
-	T& operator[] (const int& n)
-	{
-		if ((n+front)%size < front && (n + front)%size > rear)
-		{
-			return queue[(n+begin)%size];
-		}
-		return queue[begin];
-	}
-
-	T& operator++() { *queue++;  }
-
-	
-
-	Iterator begin() { return Iterator(front, this); }
-	Iterator end() { return Iterator(rear, this); }
 
 
 	~Queue()

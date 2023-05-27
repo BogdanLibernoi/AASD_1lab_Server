@@ -59,6 +59,11 @@ public:
 
 	std::string GetPatient()
 	{
+		/*if (_patients.IsEmpty())
+		{
+			return "queue is empty";
+		}*/
+
 		Patient p = _patients.Dequeue();
 		return p.GetStringPatientInfo();
 	}

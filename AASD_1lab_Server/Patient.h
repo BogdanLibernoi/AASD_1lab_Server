@@ -143,6 +143,11 @@ public:
 	}
 #pragma endregion
 
+	bool operator==(Patient& other) const 
+	{
+		return firstName == other.firstName && secondName == other.secondName && patronymic == other.patronymic && age == other.age;
+	}
+
 }; 
 
 inline std::ostream& operator<<(std::ostream &os, const Patient& pat)
